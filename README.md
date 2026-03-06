@@ -48,3 +48,17 @@ npm run dev
 
 - `GET /api/health`：健康检查
 - `GET /api/greeting?name=YourName`：问候接口
+
+## 开发规范（Spec First）
+
+- 规范目录：`docs/specs/`
+- 模板目录：`docs/specs/templates/`
+- 新需求目录：`docs/specs/features/<feature-name>/`
+
+开发前请先创建并填写：
+
+- `spec.md`
+- `tasks.md`
+- `test-plan.md`
+
+详细流程见：`docs/specs/README.md`
