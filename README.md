@@ -1,4 +1,4 @@
-# fullstack-python-vue-starter
+# magic-partner
 
 一个前后端分离的基础脚手架：
 
@@ -8,7 +8,7 @@
 ## 目录结构
 
 ```text
-fullstack-python-vue-starter/
+magic-partner/
 ├── backend/   # FastAPI
 └── frontend/  # Vue3 应用
 ```

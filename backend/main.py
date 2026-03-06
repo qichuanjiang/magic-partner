@@ -11,7 +11,7 @@ class GreetingResponse(BaseModel):
     timestamp: int
 
 
-app = FastAPI(title="Python Backend Starter", version="1.0.0")
+app = FastAPI(title="magic-partner backend", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
