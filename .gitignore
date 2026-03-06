@@ -8,6 +8,11 @@ backend/.pytest_cache/
 # Frontend
 frontend/node_modules/
 frontend/dist/
+frontend/**/*.tsbuildinfo
+frontend/**/*.d.ts
+frontend/src/**/*.js
+frontend/src/**/*.vue.js
+frontend/vite.config.js
 
 # IDE
 .idea/

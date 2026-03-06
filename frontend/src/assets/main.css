@@ -80,6 +80,72 @@ button {
   cursor: pointer;
 }
 
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .ok {
   color: #047857;
+}
+
+.divider {
+  margin: 18px 0;
+  border: none;
+  border-top: 1px solid #e5e7eb;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 18px;
+}
+
+.muted {
+  margin: 8px 0 10px;
+  color: #6b7280;
+}
+
+.preview-wrap {
+  margin: 10px 0;
+}
+
+.preview-image {
+  max-width: 280px;
+  max-height: 200px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.prompt-input {
+  min-width: 320px;
+}
+
+.error {
+  color: #b91c1c;
+}
+
+.result-card {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #d1fae5;
+  background: #f0fdf4;
+}
+
+.result-card p {
+  margin: 8px 0;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #ccfbf1;
+  color: #134e4a;
+  font-size: 12px;
 }
