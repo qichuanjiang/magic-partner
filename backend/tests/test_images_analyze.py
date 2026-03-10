@@ -14,38 +14,44 @@ def test_analyze_image_success():
 
     assert response.status_code == 200
     data = response.json()
-    assert "request_id" in data
-    assert "summary" in data
-    assert isinstance(data.get("tags"), list)
-    assert len(data["tags"]) > 0
+    assert data["request_id"].startswith("req_")
+    assert data["summary"]
+    assert isinstance(data["tags"], list)
+    assert data["tags"]
 
 
-def test_analyze_image_unsupported_type():
-    response = client.post(
-        "/api/images/analyze",
-        files={"image": ("bad.txt", b"hello", "text/plain")},
-    )
+def test_analyze_image_error_cases():
+    cases = [
+        {
+            "name": "unsupported type",
+            "files": {"image": ("bad.txt", b"hello", "text/plain")},
+            "expected_status": 400,
+            "expected_code": "UNSUPPORTED_IMAGE_TYPE",
+        },
+        {
+            "name": "too large",
+            "files": {"image": ("big.jpg", b"a" * (5 * 1024 * 1024 + 1), "image/jpeg")},
+            "expected_status": 413,
+            "expected_code": "INVALID_IMAGE_SIZE",
+        },
+        {
+            "name": "empty image",
+            "files": {"image": ("empty.jpg", b"", "image/jpeg")},
+            "expected_status": 422,
+            "expected_code": "INVALID_REQUEST",
+        },
+    ]
 
-    assert response.status_code == 400
-    data = response.json()
-    assert data["error"]["code"] == "UNSUPPORTED_IMAGE_TYPE"
+    for case in cases:
+        response = client.post("/api/images/analyze", files=case["files"])
+        data = response.json()
 
-
-def test_analyze_image_too_large():
-    too_large = b"a" * (5 * 1024 * 1024 + 1)
-    response = client.post(
-        "/api/images/analyze",
-        files={"image": ("big.jpg", too_large, "image/jpeg")},
-    )
-
-    assert response.status_code == 413
-    data = response.json()
-    assert data["error"]["code"] == "INVALID_IMAGE_SIZE"
+        assert response.status_code == case["expected_status"], case["name"]
+        assert data["error"]["code"] == case["expected_code"], case["name"]
 
 
 def test_analyze_image_missing_file():
     response = client.post("/api/images/analyze")
 
     assert response.status_code == 422
-    data = response.json()
-    assert data["error"]["code"] == "INVALID_REQUEST"
+    assert response.json()["error"]["code"] == "INVALID_REQUEST"

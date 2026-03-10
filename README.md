@@ -2,7 +2,7 @@
 
 一个前后端分离的基础脚手架：
 
-- 前端：Vue 3 + Vite + TypeScript + Pinia + Vue Router + Axios
+- 前端：Vue 3 + Vite + TypeScript + Vue Router + Axios + Vitest
 - 后端：Python + FastAPI
 
 ## 目录结构
@@ -97,11 +97,18 @@ cd backend
 .venv/bin/python -m pytest -q
 ```
 
+## 前端测试
+
+```bash
+cd frontend
+npm test
+```
+
 ## 开发规范（Spec First）
 
-- 规范目录：`docs/specs/`
-- 模板目录：`docs/specs/templates/`
-- 新需求目录：`docs/specs/features/<feature-name>/`
+- 规范目录：`specs/`
+- 模板目录：`specs/templates/`
+- 新需求目录：`specs/features/<feature-name>/`
 
 开发前请先创建并填写：
 
@@ -109,4 +116,11 @@ cd backend
 - `tasks.md`
 - `test-plan.md`
 
-详细流程见：`docs/specs/README.md`
+详细流程见：`specs/README.md`
+
+## 治理文档
+
+- `AGENTS.md`：仓库协作规则与执行约束
+- `constitution.md`：项目治理原则、工程底线与决策准则
+
+开始任何功能开发、接口调整或架构变更前，请先阅读 `AGENTS.md` 与 `constitution.md`。

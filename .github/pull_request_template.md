@@ -5,14 +5,15 @@
 
 ## 规格引用（必填）
 
-- 需求规格：`docs/specs/features/<feature-name>/spec.md`
-- 任务拆解：`docs/specs/features/<feature-name>/tasks.md`
-- 测试计划：`docs/specs/features/<feature-name>/test-plan.md`
+- 需求规格：`specs/features/<feature-name>/spec.md`
+- 任务拆解：`specs/features/<feature-name>/tasks.md`
+- 测试计划：`specs/features/<feature-name>/test-plan.md`
 
 ## 范围自检
 
 - [ ] 变更内容在规格范围内
 - [ ] 未实现规格中的非目标项
+- [ ] 本次改动已检查并符合 `constitution.md`
 
 ## 测试说明
 
