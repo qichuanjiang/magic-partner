@@ -4,12 +4,11 @@
 - `backend/`：FastAPI 后端服务，入口文件为 `main.py`，测试文件位于 `backend/tests/`。
 - `frontend/`：Vue 3 + Vite + TypeScript 前端应用，主要目录包括 `src/api`、`src/views`、`src/router`、`src/stores`、`src/assets`。
 - `specs/`：采用 Spec-first 流程的文档与功能规格说明。
-- 新功能规格请放在 `specs/features/<feature-name>/` 下，并包含以下文件：
+- 新功能规格请放在 `specs/<feature-name>/` 下，并包含以下文件：
   - `spec.md`
-  - `tasks.md`
-  - `test-plan.md`
+  - `plan.md`
+  - `task.md`
 - 新建功能规格时，默认基于 `specs/templates/` 下的正式模板创建，不应省略模板中的“宪法对齐检查”部分
-- `.github/pull_request_template.md`：PR 模板，包含必填检查项和规格文档引用要求。
 
 ## 治理约束
 - 所有开发、重构、测试、评审与文档更新，必须遵循根目录下的 `constitution.md`
@@ -58,18 +57,6 @@
   - 状态码与响应体断言
 - 单元测试优先采用表格驱动测试风格
 - 提交 PR 前必须执行 `pytest -q`
-
-## 提交与 PR 规范
-- 提交信息遵循仓库现有的 Conventional Commits 风格，例如：
-  - `feat:`
-  - `fix:`
-  - `docs:`
-  - `chore:`
-- 每次提交应聚焦单一逻辑变更，避免混入无关内容
-- 提交 PR 时必须：
-  - 关联对应规格文档：`specs/features/<feature-name>/spec.md`、`tasks.md`、`test-plan.md`
-  - 按 PR 模板提供测试证据，例如日志或截图
-  - 对非简单变更说明风险等级与回滚方案
 
 ## 自定义指令
 - 当用户说“帮我提交并推送代码”时，按以下顺序执行：

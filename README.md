@@ -1,38 +1,216 @@
 # magic-partner
 
-一个前后端分离的基础脚手架：
+一个面向“数字分身 / 娱乐陪聊”场景的前后端分离项目。目标是让用户通过上传照片、录制或上传声音样本、编辑人物设定，创建可被选择并以语音方式回复的“人物”。
 
-- 前端：Vue 3 + Vite + TypeScript + Vue Router + Axios + Vitest
-- 后端：Python + FastAPI
+## 项目目标
 
-## 目录结构
+项目计划围绕“按人物管理素材并进行语音对话”逐步实现以下能力：
+
+- 人物创建与管理
+- 声音样本采集与上传
+- 人物设定编辑
+- 文字输入与语音输入聊天
+- 基于人物设定和上下文生成回复
+- 以目标人物音色或回退默认 TTS 输出语音
+
+当前阶段优先建设一个可持续演进的本地原型，先完成规格设计，再逐步落地实现。
+
+## 目标功能范围
+
+根据当前确认的需求，第一版产品边界如下：
+
+- 场景定位：中文娱乐陪聊
+- 访问方式：无登录，任何访问者都可直接使用
+- 页面结构：
+  - 首页 / 导航页
+  - 人物管理页
+  - 聊天页
+- 人物能力：
+  - 创建人物
+  - 人物名唯一，且大小写不敏感
+  - 编辑人物设定
+  - 删除人物及其关联数据
+- 声音采集：
+  - 支持浏览器直接录音
+  - 支持一次上传多个音频文件
+  - 音频统一转为 `wav` 保存
+- 聊天能力：
+  - 支持文字输入
+  - 支持语音输入
+  - 返回语音回复，同时展示回复文本
+  - 上下文按人物共享
+  - 支持清除上下文
+
+## 核心业务规则
+
+### 1. 人物规则
+
+- 人物名长度限制：`1-30` 个字符
+- 人物名只允许：
+  - 中文
+  - 英文
+  - 数字
+  - 空格
+  - `-`
+  - `_`
+- 人物名不允许重复，且比较时大小写不敏感
+- 每个人物支持以下设定字段：
+  - 自由描述
+  - 说话风格
+  - 口头禅
+  - 补充设定
+
+### 2. 声音样本规则
+
+- 支持两种采集方式：
+  - 网页录音
+  - 上传本地音频文件
+- 上传格式建议支持：
+  - `mp3`
+  - `wav`
+  - `m4a`
+  - `webm`
+- 服务端统一转存为 `wav`
+- 单段音频时长限制：
+  - 最短 `3` 秒
+  - 最长 `60` 秒
+- 单个人物最多保存 `50` 个音频文件
+- 达到上限后，用户必须先删除旧文件，才能继续上传
+
+### 3. 人物就绪规则
+
+人物满足以下条件后，才视为“已就绪”并允许进入聊天：
+
+- 至少 `3` 段录音
+- 录音总时长至少 `30` 秒
+
+未满足条件的人物：
+
+- 在人物列表中标记为“未就绪”
+- 聊天页不可选择
+
+### 4. 对话与记忆规则
+
+- 聊天支持：
+  - 文字输入
+  - 语音输入
+- 语音输入后应展示识别文本
+- 若识别失败，用户可编辑文本后继续发送
+- 回复输出形式：
+  - 返回语音
+  - 展示对应文本
+- 上下文按人物共享
+- 每个人物保留最近 `20` 轮上下文
+- `1` 轮定义为：用户一条消息 + AI 一条消息
+- 每个人物独立保留最近 `10` 轮聊天记录
+- 清除上下文后：
+  - 不再引用旧对话
+  - 当前人物设定恢复为空默认值
+
+### 5. 回复策略
+
+- 目标优先级：
+  - 第一优先：声音像
+  - 第二优先：风格像
+- 回复应尽量避免出现“作为 AI”这类免责声明式表述
+- 当人物设定与历史对话冲突时，以人物设定为准
+- 当声音样本不足或音色效果不稳定时：
+  - 仍使用该人物设定和上下文生成内容
+  - 语音输出自动回退为默认 TTS 声音
+
+### 6. 数据生命周期
+
+- 原始录音默认长期保存，以支持后续多次训练
+- 删除人物时，需同步删除：
+  - 原始录音
+  - 人物元数据
+  - 聊天记录
+  - 生成语音等关联文件
+
+## 推荐存储设计
+
+当前已达成的设计倾向是：
+
+- 文件存磁盘
+- 人物元数据存 JSON
+- 后续可平滑演进为：
+  - 文件存对象存储
+  - 元数据存数据库
+
+这意味着第一版实现应尽量保持边界清晰，避免把“文件夹名就是全部业务模型”写死到各层代码中。
+
+## 当前仓库状态
+
+当前仓库已经落地的是“图片上传并保存”这条能力，主要用于素材归档，不代表上述数字分身能力已经全部实现。
+
+目前已存在的内容包括：
+
+- 首页
+- 图片库页面
+- 图片文件夹详情页
+- 图片上传、列表、删除 API
+- 本地图片存储实现
+
+现有页面路由：
+
+- `/`：首页
+- `/images`：图片库首页
+- `/images/:slug`：图片文件夹详情页
+
+现有后端 API：
+
+- `GET /api/health`
+- `POST /api/images`
+- `GET /api/image-folders`
+- `GET /api/image-folders/{folder_slug}`
+- `DELETE /api/image-folders/{folder_slug}/images/{file_name}`
+- `DELETE /api/image-folders/{folder_slug}`
+
+## 项目结构
 
 ```text
 magic-partner/
-├── backend/   # FastAPI
-└── frontend/  # Vue3 应用
+├── backend/
+│   ├── app/
+│   │   ├── main.py
+│   │   ├── routes.py
+│   │   ├── schemas.py
+│   │   ├── config.py
+│   │   ├── errors.py
+│   │   └── services/
+│   │       └── image_storage/
+│   ├── tests/
+│   ├── requirements.txt
+│   └── main.py
+├── frontend/
+│   ├── public/
+│   │   └── image/
+│   └── src/
+│       ├── api/
+│       ├── features/
+│       ├── router/
+│       └── views/
+├── specs/
+├── AGENTS.md
+├── constitution.md
+└── README.md
 ```
 
-## 环境要求
+## 本地开发
 
-- Python 3.10+
-- Node.js 18+
-
-## 启动方式
-
-### 1. 启动后端
+### 启动后端
 
 ```bash
 cd backend
 python -m venv .venv
-source .venv/bin/activate  # Windows 用 .venv\\Scripts\\activate
+source .venv/bin/activate
 pip install -r requirements.txt
 uvicorn main:app --host 0.0.0.0 --port 8080 --reload
 ```
 
 默认地址：`http://localhost:8080`
 
-### 2. 启动前端
+### 启动前端
 
 ```bash
 cd frontend
@@ -42,85 +220,53 @@ npm run dev
 
 默认地址：`http://localhost:5173`
 
-前端开发服务器已配置代理：`/api -> http://localhost:8080`
+开发环境下前端通过代理访问后端：`/api -> http://localhost:8080`
 
-## 示例接口
+## 测试
 
-- `GET /api/health`：健康检查
-- `GET /api/greeting?name=YourName`：问候接口
-- `POST /api/images/analyze`：上传图片并返回分析结果
-
-## 图片分析接口（image-upload-llm-analysis）
-
-### 请求约束
-
-- `Content-Type`：`multipart/form-data`
-- 文件字段：`image`
-- 可选字段：`prompt`
-- 支持格式：`jpg/jpeg/png/webp`
-- 大小限制：`<= 5MB`
-
-### 运行模式
-
-后端支持两种分析模式（默认 `mock`）：
-
-- `IMAGE_ANALYZER_MODE=mock`：返回固定模拟结果，适合本地联调。
-- `IMAGE_ANALYZER_MODE=openai`：调用 OpenAI Responses API。
-
-当使用 `openai` 模式时，需要设置：
-
-- `OPENAI_API_KEY`
-- 可选 `IMAGE_ANALYZER_MODEL`（默认 `gpt-4.1-mini`）
-- 可选 `IMAGE_ANALYZER_TIMEOUT_SEC`（默认 `15` 秒）
-
-示例（macOS/Linux）：
+### 后端测试
 
 ```bash
 cd backend
-export IMAGE_ANALYZER_MODE=openai
-export OPENAI_API_KEY=your_key_here
-.venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8080 --reload
-```
-
-### 手工验证
-
-```bash
-curl -X POST "http://localhost:8080/api/images/analyze" \
-  -F "image=@/path/to/demo.jpg"
-```
-
-## 后端测试
-
-```bash
-cd backend
-.venv/bin/python -m pip install -r requirements.txt
 .venv/bin/python -m pytest -q
 ```
 
-## 前端测试
+### 前端测试
 
 ```bash
 cd frontend
 npm test
 ```
 
-## 开发规范（Spec First）
+### 前端构建
 
-- 规范目录：`specs/`
-- 模板目录：`specs/templates/`
-- 新需求目录：`specs/features/<feature-name>/`
+```bash
+cd frontend
+npm run build
+```
 
-开发前请先创建并填写：
+## 规格驱动开发
+
+本仓库遵循 Spec-first 流程。任何非微小改动都应先补规格，再进入实现。
+
+- 治理文档：`constitution.md`
+- 协作规则：`AGENTS.md`
+- 现有规格：`specs/`
+
+后续围绕“人物声音采集与语音对话”的新功能，应补齐：
 
 - `spec.md`
-- `tasks.md`
-- `test-plan.md`
+- `plan.md`
+- `task.md`
 
-详细流程见：`specs/README.md`
+## 下一步规划
 
-## 治理文档
+围绕当前需求，后续将优先推进：
 
-- `AGENTS.md`：仓库协作规则与执行约束
-- `constitution.md`：项目治理原则、工程底线与决策准则
+1. 人物管理与声音样本存储规格
+2. 人物元数据结构与本地 JSON 存储
+3. 音频上传、转码与样本校验
+4. 聊天页与人物选择能力
+5. ASR、LLM、TTS / 音色克隆链路接入
 
-开始任何功能开发、接口调整或架构变更前，请先阅读 `AGENTS.md` 与 `constitution.md`。
+README 会随着规格落地和功能实现继续更新。
