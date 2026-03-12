@@ -4,6 +4,7 @@
       <h1>Magic Partner</h1>
       <nav>
         <RouterLink to="/">首页</RouterLink>
+        <RouterLink to="/images">图片库</RouterLink>
       </nav>
     </header>
 
